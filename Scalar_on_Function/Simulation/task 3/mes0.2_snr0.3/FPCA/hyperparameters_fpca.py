@@ -5,21 +5,21 @@ import pandas as pd
 import random
 
 from skfda.representation.basis import  FourierBasis, BSplineBasis
-from Datasets.Scalar_on_Function import Utils, Models
+from Scalar_on_Function import Utils, Models
 import json
 from itertools import product
 
 MODEL_NAME = 'FPCA'
 MES, SNR = 0.2, 0.3 
 beta, g = 1, 1       # chosen and fixed for the whole task 2
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/task 3/mes{MES}_snr{SNR}/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Simulation/task 3/mes{MES}_snr{SNR}/' + MODEL_NAME
 hyperparameters = {'n_components'            : [7, 9],
                    'data_basis_type'         : ['fourier', 'bspline'],
                    'data_basis_num'          : [9, 11, 15, 19],
                    'component_basis_type'    : ['fourier', 'bspline'],
                    'component_basis_num'     : [9, 11, 15, 19],
                    'lr'                      : [0.001, 0.1],
-                   'data_directory'          : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/task 3/B{beta}_G{g}/mes{MES}_snr{SNR}/',
+                   'data_directory'          : f'Scalar_on_Function/Simulation/data/task 3/B{beta}_G{g}/mes{MES}_snr{SNR}/',
                    'MODEL_NAME'              : MODEL_NAME,
                    'X_dir'                   : f'X/X_beta{beta}_g{g}_snr{SNR}.csv',
                    'T_dir'                   : f'T/T_beta{beta}_g{g}_snr{SNR}.csv',

@@ -1,22 +1,22 @@
 import numpy as np
 import pandas as pd
-from skfda.representation.basis import  FourierBasis, BSplineBasis
+from skfda.representation.basis import FourierBasis, BSplineBasis
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 import torch
 import json
 from itertools import product
 
 
 MODEL_NAME = 'FLM'
-MES, SNR = 0.2, 0.3 
+MES, SNR = 0.2, 0.3
 beta, g = 1, 1       # chosen and fixed for the whole task 2
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/task 3/mes{MES}_snr{SNR}/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Simulation/task 3/mes{MES}_snr{SNR}/' + MODEL_NAME
 hyperparameters = {'data_basis_type'      : ['bspline', 'fourier'],
                    'data_basis_num'       : [5, 7, 9],
                    'coef_basis_type'      : ['bspline', 'fourier'],
                    'coef_basis_num'       : [5, 7, 9],
-                   'data_directory'       : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/task 3/B{beta}_G{g}/mes{MES}_snr{SNR}/',
+                   'data_directory'       : f'Scalar_on_Function/Simulation/data/task 3/B{beta}_G{g}/mes{MES}_snr{SNR}/',
                    'MODEL_NAME'           : MODEL_NAME,
                    'X_dir'                : f'X/X_beta{beta}_g{g}_snr{SNR}.csv',
                    'T_dir'                : f'T/T_beta{beta}_g{g}_snr{SNR}.csv',
