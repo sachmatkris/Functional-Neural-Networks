@@ -5,22 +5,25 @@ import pandas as pd
 import random
 
 from skfda.representation.basis import  FourierBasis, BSplineBasis
-from Datasets.Scalar_on_Function import Utils, Models
+from Scalar_on_Function import Utils, Models
 import json
 from itertools import product
 
+
 MODEL_NAME = 'FPCA'
+task = 1
 beta, g, snr = 1, 4, 0.5
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/Regression/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
+folder_name = 'train_' + MODEL_NAME.lower() + f'_regressionsimulation_beta{beta}_g{g}_snr{snr}_task{task}'
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'n_components'            : [7, 9],
                    'data_basis_type'         : ['fourier', 'bspline'],
                    'data_basis_num'          : [9, 11, 15, 19],
                    'component_basis_type'    : ['fourier', 'bspline'],
                    'component_basis_num'     : [9, 11, 15, 19],
-                   'lr'                      : [0.001, 0.03],
-                   'data_directory'          : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/Regression/B{beta}_G{g}/snr{snr}/',
-                   'MODEL_NAME'              : MODEL_NAME,
-                   'Y_dir'                   : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
+                   'lr'                      : [0.001, 0.1],
+                   'data_directory'          : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
+                   'Y_dir'                   : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'
+                   }
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values
 Y = torch.from_numpy(pd.read_csv(hyperparameters['data_directory'] + hyperparameters['Y_dir'], header = None).values).float()
@@ -73,11 +76,10 @@ for n_component in n_components:
     results[f'raw_{n_component}_lr0.05'] = results_temp.mean(1).mean(0)[model_idx]
     model_idx += 1
     for parameters in random_samples:
-        results[f'fpcs_{n_component}_data_{parameters[0]}_{parameters[1]}_component_{parameters[2]}_{parameters[3]}_lr_{parameters[4]}'] = results_temp.mean(1).mean(0)[model_idx]
+        results[f'fpca_{n_component}_data_{parameters[0]}_{parameters[1]}_component_{parameters[2]}_{parameters[3]}_lr_{parameters[4]}'] = results_temp.mean(1).mean(0)[model_idx]
         model_idx += 1
         
 with open(save_directory + f"/results_{snr}.json",'w') as f:
     json.dump(results, f, indent = 2)
 
 print(json.dumps(results,sort_keys=True, indent = 4))
-

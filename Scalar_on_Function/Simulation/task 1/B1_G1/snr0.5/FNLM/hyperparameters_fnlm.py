@@ -1,26 +1,27 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix, KNeighborsHatMatrix, LocalLinearRegressionHatMatrix
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 from skfda import FDataGrid
 from itertools import product
 import random
 
-model_name = 'FNLM'
-save_directory = 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/Regression/B1_G1/' + model_name
+MODEL_NAME = 'FNLM'
+task = 1
+beta, g, snr = 1, 1, 0.5
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'hat_matrix'       : ['nadarayawatson', 'locallinear', 'kneighbors'],
-                   'bandwidth'        : [0.1, 0.8],
+                   'bandwidth'        : [0.01, 1.0],
                    'k_neighbors'      : [2, 20],
                    'llr basis'        : ['fourier', 'bspline'],
                    'llr basis num'    : [5, 7, 9, 11, 15],
-                   'data_directory'   : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/Regression/B1_G1/'}
-
+                   'data_directory'   : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
+                   'Y_dir'            : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values
-Y = pd.read_csv(hyperparameters['data_directory'] + 'Y/Y_beta1_g1_snr0.5.csv', header = None).values.squeeze()
+Y = pd.read_csv(hyperparameters['data_directory'] + hyperparameters['Y_dir'], header = None).values.squeeze()
 T = pd.read_csv(hyperparameters['data_directory'] + 'T/T.csv', header = None).values
 structure =  {'func': [[0, 200]], 'scalar': [200, 200]}
 
@@ -58,7 +59,6 @@ for fold_idx in range(len(cv_folds)):
             results_temp[fold_idx, model_idx] = Utils.fnlm(X_train, X_test, y_train, y_test, hat_matrix)
         model_idx += 1
 
-
 results = {}
 for fold_idx in range(len(cv_folds)):
     model_idx = 0
@@ -66,7 +66,7 @@ for fold_idx in range(len(cv_folds)):
         results[f'hat_{parameters[0]}_bw_{parameters[1]}_k_{parameters[2]}_basis_{parameters[3]}_n_{parameters[4]}'] = results_temp.mean(0)[model_idx]
         model_idx += 1
             
-with open(save_directory + "/results.json",'w') as f:
+with open(save_directory + f"/results_{snr}.json",'w') as f:
     json.dump(results, f, indent = 2)
 
 print(json.dumps(results,sort_keys=True, indent = 4))

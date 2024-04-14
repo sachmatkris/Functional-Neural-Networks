@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix, KNeighborsHatMatrix, LocalLinearRegressionHatMatrix
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 from skfda import FDataGrid
@@ -10,16 +9,16 @@ from itertools import product
 import random
 
 MODEL_NAME = 'FNLM'
+task = 1
 beta, g, snr = 1, 3, 0.5
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/Regression/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'hat_matrix'       : ['nadarayawatson', 'locallinear', 'kneighbors'],
-                   'bandwidth'        : [0.1, 1.0],
+                   'bandwidth'        : [0.01, 1.0],
                    'k_neighbors'      : [2, 20],
                    'llr basis'        : ['fourier', 'bspline'],
                    'llr basis num'    : [5, 7, 9, 11, 15],
-                   'data_directory'   : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/Regression/B{beta}_G{g}/snr{snr}/',
+                   'data_directory'   : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
                    'Y_dir'            : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
-
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values
 Y = pd.read_csv(hyperparameters['data_directory'] + hyperparameters['Y_dir'], header = None).values.squeeze()
@@ -59,7 +58,6 @@ for fold_idx in range(len(cv_folds)):
             hat_matrix = KNeighborsHatMatrix(n_neighbors = parameters[2])
             results_temp[fold_idx, model_idx] = Utils.fnlm(X_train, X_test, y_train, y_test, hat_matrix)
         model_idx += 1
-
 
 results = {}
 for fold_idx in range(len(cv_folds)):

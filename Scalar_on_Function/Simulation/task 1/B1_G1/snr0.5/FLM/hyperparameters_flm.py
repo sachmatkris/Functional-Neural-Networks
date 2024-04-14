@@ -2,21 +2,24 @@ import numpy as np
 import pandas as pd
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 import torch
 import json
 from itertools import product
 
-model_name = 'FLM'
-save_directory = 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/Regression/B1_G1/' + model_name
+MODEL_NAME = 'FLM'
+task = 1
+beta, g, snr = 1, 1, 0.5
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'data_basis_type'      : ['bspline', 'fourier'],
                    'data_basis_num'       : [5, 7, 9],
                    'coef_basis_type'      : ['bspline', 'fourier'],
                    'coef_basis_num'       : [5, 7, 9],
-                   'data_directory'       : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/Regression/B1_G1/'}
+                   'data_directory'       : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
+                   'Y_dir'                : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values
-Y = torch.from_numpy(pd.read_csv(hyperparameters['data_directory'] + 'Y/Y_beta1_g1_snr0.5.csv', header = None).values).float()
+Y = torch.from_numpy(pd.read_csv(hyperparameters['data_directory'] + hyperparameters['Y_dir'], header = None).values).float()
 T = pd.read_csv(hyperparameters['data_directory'] + 'T/T.csv', header = None).values
 
 cv_folds = Utils.kfold_cv(X)
@@ -24,8 +27,6 @@ structure =  {'func': [[0, 200]], 'scalar': [200, 200]}
 
 all_parameters = list(product(hyperparameters['data_basis_type'], hyperparameters['data_basis_num'],
                               hyperparameters['coef_basis_type'], hyperparameters['coef_basis_num']))
-#random_samples = random.sample(all_parameters, 100)
-
 
 results_temp = np.zeros([5, len(all_parameters)])
 for fold_idx in range(len(cv_folds)):
@@ -52,8 +53,7 @@ for fold_idx in range(len(cv_folds)):
         results[f'data_{parameters[0]}_{parameters[1]}_coef_{parameters[2]}_{parameters[3]}'] = results_temp.mean(0)[model_idx]
         model_idx += 1
             
-with open(save_directory + "/results.json",'w') as f:
+with open(save_directory + f"/results_{snr}.json",'w') as f:
     json.dump(results, f, indent = 2)
 
 print(json.dumps(results,sort_keys=True, indent = 4))
-

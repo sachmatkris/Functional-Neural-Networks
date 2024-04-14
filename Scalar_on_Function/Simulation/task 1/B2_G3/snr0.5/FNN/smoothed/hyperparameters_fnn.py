@@ -1,6 +1,5 @@
 import torch
-from Datasets.Scalar_on_Function import Utils
-from Datasets.Scalar_on_Function.Simulation.train_functions import train_fnn
+from Scalar_on_Function.Simulation.train_functions import train_fnn_s
 
 from ray import train, tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
@@ -10,7 +9,6 @@ MODEL_NAME = 'FNN'
 task = 1
 beta, g, snr = 2, 3, 0.5
 folder_name = 'train_' + MODEL_NAME.lower() + f'_regressionsimulation_beta{beta}_g{g}_snr{snr}_task{task}'
-save_directory = 'C:/Users/Kristijonas/ray_results/' + folder_name
 hyperparameters = {'weight_basis'       : tune.choice(['fourier', 'bspline']),
                    'weight_basis_num'   : tune.choice([3, 5, 7, 9, 13]),
                    'data_basis'         : tune.choice(['fourier', 'bspline']),
@@ -18,7 +16,7 @@ hyperparameters = {'weight_basis'       : tune.choice(['fourier', 'bspline']),
                    'hidden_layers'      : tune.choice([1, 2, 3]),
                    'hidden_nodes'       : tune.choice([16, 32, 64]),
                    'lr'                 : tune.uniform(0.001, 0.03),
-                   'data_directory'     : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
+                   'data_directory'     : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
                    'MODEL_NAME'         : MODEL_NAME,
                    'Y_dir'              : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'
                    }
@@ -26,7 +24,7 @@ hyperparameters = {'weight_basis'       : tune.choice(['fourier', 'bspline']),
 
 if __name__ == "__main__":
     sched = AsyncHyperBandScheduler()
-    trainable_with_cpu_gpu = tune.with_resources(train_fnn, {"cpu": 12, "gpu": 1})
+    trainable_with_cpu_gpu = tune.with_resources(train_fnn_s, {"cpu": 12, "gpu": 1})
     tuner = tune.Tuner(
         trainable_with_cpu_gpu,
         tune_config = tune.TuneConfig(
@@ -42,5 +40,3 @@ if __name__ == "__main__":
     )
     results = tuner.fit()
     print("Best config is:", results.get_best_result().config)
-
-result_df = Utils.load_best(save_directory, train_fnn)

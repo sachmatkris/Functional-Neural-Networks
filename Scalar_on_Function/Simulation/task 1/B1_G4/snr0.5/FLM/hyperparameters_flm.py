@@ -2,19 +2,20 @@ import numpy as np
 import pandas as pd
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 import torch
 import json
 from itertools import product
 
 MODEL_NAME = 'FLM'
+task = 1
 beta, g, snr = 1, 4, 0.5
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/Regression/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'data_basis_type'      : ['bspline', 'fourier'],
                    'data_basis_num'       : [5, 7, 9],
                    'coef_basis_type'      : ['bspline', 'fourier'],
                    'coef_basis_num'       : [5, 7, 9],
-                   'data_directory'       : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/Regression/B{beta}_G{g}/snr{snr}/',
+                   'data_directory'       : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
                    'Y_dir'                : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values
@@ -26,8 +27,6 @@ structure =  {'func': [[0, 200]], 'scalar': [200, 200]}
 
 all_parameters = list(product(hyperparameters['data_basis_type'], hyperparameters['data_basis_num'],
                               hyperparameters['coef_basis_type'], hyperparameters['coef_basis_num']))
-#random_samples = random.sample(all_parameters, 100)
-
 
 results_temp = np.zeros([5, len(all_parameters)])
 for fold_idx in range(len(cv_folds)):
@@ -58,4 +57,3 @@ with open(save_directory + f"/results_{snr}.json",'w') as f:
     json.dump(results, f, indent = 2)
 
 print(json.dumps(results,sort_keys=True, indent = 4))
-

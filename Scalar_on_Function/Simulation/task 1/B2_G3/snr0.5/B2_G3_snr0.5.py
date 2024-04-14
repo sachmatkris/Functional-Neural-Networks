@@ -7,14 +7,14 @@ from skfda import FDataGrid
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix, KNeighborsHatMatrix, LocalLinearRegressionHatMatrix
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from Datasets.Scalar_on_Function import Models, Utils
+from Scalar_on_Function import Models, Utils
 
 
 
 task = 1
 beta, g, snr = 2, 3, 0.5
-data_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/'
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/'
+data_directory = f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/'
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/'
 Y_dir = f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'
 
 X = pd.read_csv(data_directory + 'X/X.csv', header = None).values
@@ -27,7 +27,7 @@ loss = nn.MSELoss()
 # here we store results into (iter, FOLD, MODELS) array
 NUM_ITER = 10
 EPOCHS = 300
-results = np.zeros(shape = (NUM_ITER, 5, 8))
+results = np.zeros(shape = (NUM_ITER, 5, 9))
 for i in range(NUM_ITER):
     print(f'Iteration no. {i}')
     for fold_idx in range(len(cv_folds)):
@@ -53,7 +53,14 @@ for i in range(NUM_ITER):
                             dropout = 0, device = device)
         results[i, fold_idx, 2] = Utils.pytorch_trainer(model_LSTM, 'LSTM', loss, 'regression', train_dataloader_lstm, test_dataloader_lstm, EPOCHS, lr = 0.005, device = 'cuda:0')
 
-        # FNN
+        # FNN_o
+        train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
+        model_FNN = Models.FNN(structure = structure, functional_bases = [FourierBasis(n_basis = 13)], 
+                               sub_hidden = [32, 32, 32], dropout = 0, device = device, smoothed = False)
+        results[i, fold_idx, 0] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'regression', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.004, device = 'cuda:0')
+
+
+        # FNN_s
         train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
         model_FNN = Models.FNN(structure = structure, functional_bases = [BSplineBasis(n_basis = 11)],
                             phi_bases = [FourierBasis(n_basis = 9)], sub_hidden = [32, 32],

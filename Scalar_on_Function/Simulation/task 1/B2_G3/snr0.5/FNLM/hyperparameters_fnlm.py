@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import json
-from Datasets.Scalar_on_Function import Utils
+from Scalar_on_Function import Utils
 from skfda.misc.hat_matrix import NadarayaWatsonHatMatrix, KNeighborsHatMatrix, LocalLinearRegressionHatMatrix
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 from skfda import FDataGrid
@@ -11,13 +11,13 @@ import random
 MODEL_NAME = 'FNLM'
 task = 1
 beta, g, snr = 2, 3, 0.5
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Simulation/task {task}/B{beta}_G{g}/snr{snr}/' + MODEL_NAME
 hyperparameters = {'hat_matrix'       : ['nadarayawatson', 'locallinear', 'kneighbors'],
                    'bandwidth'        : [0.01, 1.0],
                    'k_neighbors'      : [2, 20],
                    'llr basis'        : ['fourier', 'bspline'],
                    'llr basis num'    : [5, 7, 9, 11, 15],
-                   'data_directory'   : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
+                   'data_directory'   : f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/snr{snr}/',
                    'Y_dir'            : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
 
 X = pd.read_csv(hyperparameters['data_directory'] + 'X/X.csv', header = None).values

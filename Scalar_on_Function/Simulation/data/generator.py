@@ -8,7 +8,7 @@ task = 3
 beta, g, snr = 1, 1, 1
 mes = 0.8
 n = 250
-folder = f'Datasets/Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/'
+folder = f'Scalar_on_Function/Simulation/data/task {task}/B{beta}_G{g}/'
 
 class SoFRDataGenerator:
     def __init__(self, grid, x = 1, beta = 1, g = 1, mes = 1, err = 1, a_mu = 0, a_sd = 1):
@@ -74,7 +74,7 @@ class SoFRDataGenerator:
         else:
             print('There is no such version for a non-linearity g(t)')
             
-    def save(self, task, folder = 'Datasets/Scalar_on_Function/Simulation/data/Regression/'):
+    def save(self, task, folder = 'Scalar_on_Function/Simulation/data/Regression/'):
         """
         folder : folder where observations are saved
         """
