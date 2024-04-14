@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from Datasets.Scalar_on_Function import Models, Utils
 
 
-directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/'
+directory = f'Scalar_on_Function/Real/Tecator/'
 data = pd.DataFrame(arff.loadarff(directory + 'tecator.arff')[0]).iloc[:215,:]
 X = data.iloc[:,:100].values
 Y = torch.tensor(np.array(data.loc[:,'fat']).reshape([-1,1]), dtype=torch.float)
@@ -24,7 +24,7 @@ loss = nn.MSELoss()
 # here we store results into (iter, FOLD, MODELS) array
 NUM_ITER = 10
 EPOCHS = 500
-results = np.zeros(shape = (NUM_ITER, 5, 8))
+results = np.zeros(shape = (NUM_ITER, 5, 9))
 for i in range(NUM_ITER):
     print(f'Iteration no. {i}')
     for fold_idx in range(len(cv_folds)):
@@ -50,18 +50,24 @@ for i in range(NUM_ITER):
                             dropout = 0, device = device)
         results[i, fold_idx, 2] = Utils.pytorch_trainer(model_LSTM, 'LSTM', loss, 'regression', train_dataloader_lstm, test_dataloader_lstm, EPOCHS, lr = 0.01, device = 'cuda:0')
 
-        # FNN
+        # FNN_o
+        train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
+        model_FNN = Models.FNN(structure = structure, phi_bases = [FourierBasis(n_basis = 15)], sub_hidden = [32],
+                                   dropout = 0, device = device, smoothed = False)
+        results[i, fold_idx, 3] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'regression', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.009, device = 'cuda:0')
+
+        # FNN_s
         train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
         model_FNN = Models.FNN(structure = structure, functional_bases = [BSplineBasis(n_basis = 21)],
                             phi_bases = [FourierBasis(n_basis = 13)], sub_hidden = [64],
                             dropout = 0, device = device)
-        results[i, fold_idx, 3] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'regression', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.02, device = 'cuda:0')
+        results[i, fold_idx, 4] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'regression', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.02, device = 'cuda:0')
 
         # AdaFNN
         train_dataloader_adafnn, test_dataloader_adafnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'AdaFNN', batch_size = 16)
         model_AdaFNN = Models.AdaFNN(structure = structure, n_bases = [7], bases_hidden = [[64, 64, 64]], sub_hidden = [32, 32],
                             lambda1 = 0.3, lambda2 = 0.5, dropout = 0, device = device)     
-        results[i, fold_idx, 4] = Utils.pytorch_trainer(model_AdaFNN, 'AdaFNN', loss, 'regression', train_dataloader_adafnn, test_dataloader_adafnn, EPOCHS, lr = 0.01, device = 'cuda:0')
+        results[i, fold_idx, 5] = Utils.pytorch_trainer(model_AdaFNN, 'AdaFNN', loss, 'regression', train_dataloader_adafnn, test_dataloader_adafnn, EPOCHS, lr = 0.01, device = 'cuda:0')
 
         # FPCA
         data_FPCA = Utils.get_data_functional(structure, X, Y, T, cv_folds, fold_idx)
@@ -69,11 +75,11 @@ for i in range(NUM_ITER):
         train_dataloader_fpca, test_dataloader_fpca = Utils.raw_fpca(data_FPCA, [n_component])
         #train_dataloader_fpca, test_dataloader_fpca = Utils.basis_fpca(data_FPCA,  [BSplineBasis(n_basis = 19)], [BSplineBasis(n_basis = 15)], [n_component])
         model_FPCA = Models.NN(in_d = n_component, sub_hidden = [32, 32], dropout = 0, device = 'cuda', model_version = 'advanced')
-        results[i, fold_idx, 5] = Utils.pytorch_trainer(model_FPCA, 'NN', loss, 'regression', train_dataloader_fpca, test_dataloader_fpca, EPOCHS, lr = 0.05, device = 'cuda')
+        results[i, fold_idx, 6] = Utils.pytorch_trainer(model_FPCA, 'NN', loss, 'regression', train_dataloader_fpca, test_dataloader_fpca, EPOCHS, lr = 0.05, device = 'cuda')
 
         # FLM
         data_FLM = Utils.get_data_functional(structure, X, Y, T, cv_folds, fold_idx)
-        results[i, fold_idx, 6] = Utils.flm(data_FLM, [FourierBasis([850, 1050], n_basis = 9)], [FourierBasis([850, 1050], n_basis = 9)])
+        results[i, fold_idx, 7] = Utils.flm(data_FLM, [FourierBasis([850, 1050], n_basis = 9)], [FourierBasis([850, 1050], n_basis = 9)])
 
 
         # FNLM
@@ -84,7 +90,7 @@ for i in range(NUM_ITER):
         basis = BSplineBasis(n_basis = 11)
         X_train_basis, X_test_basis = X_train.to_basis(basis), X_test.to_basis(basis)
         #results[i, fold_idx, 7] = Utils.fnlm(X_train, X_test, y_train.numpy(), y_test.numpy(), NadarayaWatsonHatMatrix(bandwidth = 0.82))
-        results[i, fold_idx, 7] = Utils.fnlm(X_train_basis, X_test_basis, y_train, y_test, LocalLinearRegressionHatMatrix(bandwidth = 5.07))
+        results[i, fold_idx, 8] = Utils.fnlm(X_train_basis, X_test_basis, y_train, y_test, LocalLinearRegressionHatMatrix(bandwidth = 5.07))
 
 
 results.mean(1).mean(0)

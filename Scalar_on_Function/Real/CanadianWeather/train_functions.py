@@ -19,7 +19,7 @@ def train_nn(config):
     EPOCHS = 300
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    json_loaded = open('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
     list_loaded = json.load(json_loaded)
     
     original_data = np.array(list_loaded['dailyAv'])
@@ -50,7 +50,7 @@ def train_cnn(config):
     EPOCHS = 500
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    json_loaded = open('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
     list_loaded = json.load(json_loaded)
     
     original_data = np.array(list_loaded['dailyAv'])
@@ -83,7 +83,7 @@ def train_lstm(config):
     EPOCHS = 500
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    json_loaded = open('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
     list_loaded = json.load(json_loaded)
     
     original_data = np.array(list_loaded['dailyAv'])
@@ -110,11 +110,50 @@ def train_lstm(config):
 
 
 
-def train_fnn(config):
+def train_fnn_o(config):
     EPOCHS = 500
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    json_loaded = open('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    list_loaded = json.load(json_loaded)
+    
+    original_data = np.array(list_loaded['dailyAv'])
+    X = original_data[:,:,[0,2]].swapaxes(1,0).reshape(35,-1, order = 'F') # only temperature and log10 precipitation
+    regions = np.array(list_loaded['region'])
+    encoder = LabelEncoder()
+    encoder.fit(regions)
+    Y = torch.tensor(encoder.transform(regions)).long()
+    structure = {'func':[[0,365],[365,730]], 'scalar':[730,730]}
+
+    if config['weight_basis1'] == 'bspline':
+        phi_base1 = BSplineBasis([0, 1], config['weight_basis_num1'])
+    elif config['weight_basis1'] == 'fourier':
+        phi_base1 = FourierBasis([0, 1], config['weight_basis_num1'])
+    if config['weight_basis2'] == 'bspline':
+        phi_base2 = BSplineBasis([0, 1], config['weight_basis_num2'])
+    elif config['weight_basis2'] == 'fourier':
+        phi_base2 = FourierBasis([0, 1], config['weight_basis_num2'])
+
+    cv_folds = Utils.kfold_cv(X)
+    results = np.zeros(shape = (NUM_ITER, 5))
+    for i in range(NUM_ITER):
+        for fold_idx in range(len(cv_folds)):
+            train_dataloader, test_dataloader = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 4)
+            model = Models.FNN(structure = structure, phi_bases = [phi_base1, phi_base2], 
+                               sub_hidden = [config['hidden_nodes']] * config['hidden_layers'],
+                               num_classes = 4, dropout = 0, device = device, smoothed = False)
+            loss = nn.CrossEntropyLoss()
+            results[i, fold_idx] = Utils.pytorch_trainer(model, 'FNN', loss, 'classification', train_dataloader, test_dataloader, EPOCHS, lr = config['lr'], device = 'cuda:0')
+    cv_loss = {"accuracy" : results.mean().item()}
+    train.report(cv_loss)
+
+
+
+def train_fnn_s(config):
+    EPOCHS = 500
+    NUM_ITER = 3
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
     list_loaded = json.load(json_loaded)
     
     original_data = np.array(list_loaded['dailyAv'])
@@ -165,7 +204,7 @@ def train_adafnn(config):
     EPOCHS = 500
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    json_loaded = open('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
+    json_loaded = open('Scalar_on_Function/Real/CanadianWeather/CanadianWeather.json')
     list_loaded = json.load(json_loaded)
     
     original_data = np.array(list_loaded['dailyAv'])

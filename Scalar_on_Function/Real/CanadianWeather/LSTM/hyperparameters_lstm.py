@@ -17,7 +17,7 @@ hyperparameters = {'lstm_hidden1'        : tune.choice([10, 25, 50, 100, 150, 20
                    'num_layers'         : tune.choice([1, 2, 3]),
                    'bidirectional'      : tune.choice([True, False]),
                    'lr'                 : tune.uniform(0.001, 0.1),
-                   'data_directory'     : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/',
+                   'data_directory'     : 'Scalar_on_Function/Real/CanadianWeather/',
                    'MODEL_NAME'         : MODEL_NAME}
 
 if __name__ == "__main__":

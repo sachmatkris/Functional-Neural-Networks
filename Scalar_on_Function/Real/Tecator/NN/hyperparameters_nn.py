@@ -13,7 +13,7 @@ save_directory = 'C:/Users/Kristijonas/ray_results/' + folder_name
 hyperparameters = {'hidden_layers'      : tune.choice([1, 2, 3]),
                    'hidden_nodes'       : tune.choice([16, 32, 64, 128]),
                    'lr'                 : tune.uniform(0.001, 0.1),
-                   'data_directory'     : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'     : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'         : MODEL_NAME}
 
 if __name__ == "__main__":

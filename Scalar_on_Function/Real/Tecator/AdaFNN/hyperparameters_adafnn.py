@@ -17,7 +17,7 @@ hyperparameters = {'n_bases'            : tune.choice([3, 4, 5, 6, 7]),
                    'lambda1'            : tune.uniform(0.0, 1.0),
                    'lambda2'            : tune.uniform(0.0, 1.0),
                    'lr'                 : tune.uniform(0.001, 0.05),
-                   'data_directory'     : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'     : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'         : MODEL_NAME}
 
 

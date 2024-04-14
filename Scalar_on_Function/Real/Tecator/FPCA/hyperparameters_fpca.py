@@ -19,7 +19,7 @@ hyperparameters = {'n_components'            : [7, 9],
                    'component_basis_type'    : ['fourier', 'bspline'],
                    'component_basis_num'     : [9, 11, 15, 19],
                    'lr'                      : [0.001, 0.1],
-                   'data_directory'          : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'          : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'              : MODEL_NAME}
 
 data = pd.DataFrame(arff.loadarff(hyperparameters['data_directory'] + 'tecator.arff')[0]).iloc[:215,:]

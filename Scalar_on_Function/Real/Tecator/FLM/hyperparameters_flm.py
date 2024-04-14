@@ -9,12 +9,12 @@ from itertools import product
 from scipy.io import arff
 
 MODEL_NAME = 'FLM'
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Real/Tecator/' + MODEL_NAME
 hyperparameters = {'data_basis_type'      : ['bspline', 'fourier'],
                    'data_basis_num'       : [5, 7, 9],
                    'coef_basis_type'      : ['bspline', 'fourier'],
                    'coef_basis_num'       : [5, 7, 9],
-                   'data_directory'       : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'       : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'           : MODEL_NAME}
 
 data = pd.DataFrame(arff.loadarff(hyperparameters['data_directory'] + 'tecator.arff')[0]).iloc[:215,:]

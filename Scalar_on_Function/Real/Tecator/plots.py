@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
-directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/'
+directory = f'Scalar_on_Function/Real/Tecator/'
 data = pd.DataFrame(arff.loadarff(directory + 'tecator.arff')[0]).iloc[:215,:]
 X = data.iloc[:,:100]
 Y = np.array(data.loc[:,'fat']).reshape([-1,1])
@@ -22,4 +22,4 @@ ax.set_xlabel('Wavelength (in nm)')
 ax.set_ylabel('Absorbance')
 radius_2Dline = plt.Line2D((0, 1), (0, 0), color='k', linewidth=2)
 fig.colorbar(m, ax = ax).set_label('Fat', size=15) 
-plt.savefig('Datasets/Scalar_on_Function/Real/Tecator/tecator_data.png', dpi=400, transparent=True)
+plt.savefig('Scalar_on_Function/Real/Tecator/tecator_data.png', dpi=400, transparent=True)

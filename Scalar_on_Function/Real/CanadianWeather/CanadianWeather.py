@@ -9,7 +9,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from Datasets.Scalar_on_Function import Models, Utils
 
 
-directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/'
+directory = f'Scalar_on_Function/Real/CanadianWeather/'
 json_loaded = open(directory + 'CanadianWeather.json')
 list_loaded = json.load(json_loaded)
 original_data = np.array(list_loaded['dailyAv'])
@@ -28,7 +28,7 @@ loss = nn.CrossEntropyLoss()
 # here we store results into (iter, FOLD, MODELS) array
 NUM_ITER = 10
 EPOCHS = 500
-results = np.zeros(shape = (NUM_ITER, 5, 6))
+results = np.zeros(shape = (NUM_ITER, 5, 7))
 for i in range(NUM_ITER):
     print(f'Iteration no. {i}')
     for fold_idx in range(len(cv_folds)):
@@ -54,18 +54,24 @@ for i in range(NUM_ITER):
                             num_classes = 4, dropout = 0, device = device)
         results[i, fold_idx, 2] = Utils.pytorch_trainer(model_LSTM, 'LSTM', loss, 'classification', train_dataloader_lstm, test_dataloader_lstm, EPOCHS, lr = 0.015, device = 'cuda:0')
 
-        # FNN
+        # FNN_o
+        train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
+        model_FNN = Models.FNN(structure = structure, phi_bases = [FourierBasis(n_basis = 13), FourierBasis(n_basis = 7)],
+                        sub_hidden = [64, 64, 64], num_classes = 4, dropout = 0, device = device, smoothed = False)
+        results[i, fold_idx, 3] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'classification', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.008, device = 'cuda:0')
+
+        # FNN_s
         train_dataloader_fnn, test_dataloader_fnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
         model_FNN = Models.FNN(structure = structure, functional_bases = [BSplineBasis(n_basis = 15), BSplineBasis(n_basis = 15)],
                             phi_bases = [FourierBasis(n_basis = 13), BSplineBasis(n_basis = 13)], sub_hidden = [32, 32, 32],
                             num_classes = 4, dropout = 0, device = device)
-        results[i, fold_idx, 3] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'classification', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.025, device = 'cuda:0')
+        results[i, fold_idx, 4] = Utils.pytorch_trainer(model_FNN, 'FNN', loss, 'classification', train_dataloader_fnn, test_dataloader_fnn, EPOCHS, lr = 0.025, device = 'cuda:0')
 
         # AdaFNN
         train_dataloader_adafnn, test_dataloader_adafnn = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'AdaFNN', batch_size = 16)
         model_AdaFNN = Models.AdaFNN(structure = structure, n_bases = [4, 3], bases_hidden = [[16, 16], [64]], sub_hidden = [32, 32],
                             lambda1 = 0.3, lambda2 = 0.5, num_classes = 4, dropout = 0, device = device)     
-        results[i, fold_idx, 4] = Utils.pytorch_trainer(model_AdaFNN, 'AdaFNN', loss, 'classification', train_dataloader_adafnn, test_dataloader_adafnn, EPOCHS, lr = 0.05, device = 'cuda:0')
+        results[i, fold_idx, 5] = Utils.pytorch_trainer(model_AdaFNN, 'AdaFNN', loss, 'classification', train_dataloader_adafnn, test_dataloader_adafnn, EPOCHS, lr = 0.05, device = 'cuda:0')
 
         # FPCA
         data_FPCA = Utils.get_data_functional(structure, X, Y, T, cv_folds, fold_idx)
@@ -73,7 +79,7 @@ for i in range(NUM_ITER):
         #train_dataloader_fpca, test_dataloader_fpca = Utils.raw_fpca(data_FPCA, [n_component])
         train_dataloader_fpca, test_dataloader_fpca = Utils.basis_fpca(data_FPCA,  [BSplineBasis(n_basis = 19), BSplineBasis(n_basis = 9)], [BSplineBasis(n_basis = 19), FourierBasis(n_basis = 11)], n_component)
         model_FPCA = Models.NN(in_d = sum(n_component), sub_hidden = [32, 32], num_classes = 4, dropout = 0, device = 'cuda', model_version = 'advanced')
-        results[i, fold_idx, 5] = Utils.pytorch_trainer(model_FPCA, 'NN', loss, 'classification', train_dataloader_fpca, test_dataloader_fpca, EPOCHS, lr = 0.03, device = 'cuda')
+        results[i, fold_idx, 6] = Utils.pytorch_trainer(model_FPCA, 'NN', loss, 'classification', train_dataloader_fpca, test_dataloader_fpca, EPOCHS, lr = 0.03, device = 'cuda')
 
 
 results.mean(1).mean(0)

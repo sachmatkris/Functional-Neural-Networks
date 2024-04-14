@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import json
 
 
-directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/'
+directory = f'Scalar_on_Function/Real/CanadianWeather/'
 json_loaded = open(directory +'CanadianWeather.json')
 list_loaded = json.load(json_loaded)
 
@@ -27,4 +27,4 @@ axs[1].set_ylabel(r'$\log_{10}$-precipitation')
 handles, labels = axs[0].get_legend_handles_labels()
 by_label = dict(zip(labels, handles))
 axs[0].legend(by_label.values(), by_label.keys())
-plt.savefig('Datasets/Scalar_on_Function/Real/CanadianWeather/canadianweather_data.png', dpi=400, transparent=True)
+plt.savefig('Scalar_on_Function/Real/CanadianWeather/canadianweather_data.png', dpi=400, transparent=True)

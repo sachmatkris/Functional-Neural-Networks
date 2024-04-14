@@ -84,7 +84,35 @@ def train_lstm(config):
 
 
 
-def train_fnn(config):
+def train_fnn_o(config):
+    EPOCHS = 500
+    NUM_ITER = 3
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    data = pd.DataFrame(arff.loadarff(config['data_directory'] + 'tecator.arff')[0]).iloc[:215,:]
+    X = data.iloc[:,:100].values
+    Y = torch.tensor(np.array(data.loc[:,'fat']).reshape([-1,1]), dtype=torch.float)
+    structure = {'func' : [[0, 100]], 'scalar' : [100, 100]}
+    cv_folds = Utils.kfold_cv(X)
+    results = np.zeros(shape = (NUM_ITER, 5))
+
+    if config['weight_basis'] == 'bspline':
+        phi_base = BSplineBasis([0, 1], config['weight_basis_num'])
+    elif config['weight_basis'] == 'fourier':
+        phi_base = FourierBasis([0, 1], config['weight_basis_num'])
+
+    for i in range(NUM_ITER):
+        for fold_idx in range(len(cv_folds)):
+            train_dataloader, test_dataloader = Utils.get_data_loaders(structure, X, Y, cv_folds, fold_idx, 'FNN', batch_size = 16)
+            model = Models.FNN(structure = structure, phi_bases = [phi_base], sub_hidden = [config['hidden_nodes']] * config['hidden_layers'],
+                                    dropout = 0, device = device, smoothed = False)
+            loss = nn.MSELoss()
+            results[i, fold_idx] = Utils.pytorch_trainer(model, 'FNN', loss, 'regression', train_dataloader, test_dataloader, EPOCHS, lr = config['lr'], device = 'cuda:0')
+    cv_loss = {"mse" : results.mean().item()}
+    train.report(cv_loss)
+
+
+
+def train_fnn_s(config):
     EPOCHS = 500
     NUM_ITER = 3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

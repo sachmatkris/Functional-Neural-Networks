@@ -10,13 +10,13 @@ from itertools import product
 from scipy.io import arff
 
 MODEL_NAME = 'FNLM'
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/' + MODEL_NAME
+save_directory = f'Scalar_on_Function/Real/Tecator/' + MODEL_NAME
 hyperparameters = {'hat_matrix'       : ['nadarayawatson', 'locallinear', 'kneighbors'],
                    'bandwidth'        : [2, 20],
                    'k_neighbors'      : [2, 50],
                    'llr basis'        : ['fourier', 'bspline'],
                    'llr basis num'    : [5, 7, 9, 11, 15],
-                   'data_directory'   : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'   : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'       : MODEL_NAME}
 
 data = pd.DataFrame(arff.loadarff(hyperparameters['data_directory'] + 'tecator.arff')[0]).iloc[:215,:]

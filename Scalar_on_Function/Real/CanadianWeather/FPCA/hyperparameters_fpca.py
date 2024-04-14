@@ -24,7 +24,7 @@ hyperparameters = {'n_components1'            : [7, 9],
                    'component_basis_num1'     : [9, 11, 15, 19],
                    'component_basis_num2'     : [9, 11, 15, 19],
                    'lr'                       : [0.001, 0.1],
-                   'data_directory'           : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/CanadianWeather/',
+                   'data_directory'           : 'Scalar_on_Function/Real/CanadianWeather/',
                    'MODEL_NAME'               : MODEL_NAME}
 
 

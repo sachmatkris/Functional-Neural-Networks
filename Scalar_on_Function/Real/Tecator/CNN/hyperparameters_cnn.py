@@ -19,7 +19,7 @@ hyperparameters = {'conv_hidden_layers'     : tune.choice([1, 2, 3]),
                    'convolution_stride'     : tune.choice([1, 2]),
                    'pool_stride'            : tune.choice([1, 2]),
                    'lr'                     : tune.uniform(0.001, 0.1),
-                   'data_directory'         : 'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Scalar_on_Function/Real/Tecator/',
+                   'data_directory'         : 'Scalar_on_Function/Real/Tecator/',
                    'MODEL_NAME'             : MODEL_NAME}
 
 
