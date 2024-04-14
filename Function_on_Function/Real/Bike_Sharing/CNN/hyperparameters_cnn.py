@@ -1,6 +1,5 @@
 import torch
-from Datasets.Function_on_Function import Utils
-from Datasets.Function_on_Function.Real.Bike_Sharing.train_functions import train_cnn
+from Function_on_Function.Real.Bike_Sharing.train_functions import train_cnn
 from ray import train, tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -8,7 +7,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 MODEL_NAME = 'CNN'
 folder_name = 'train_' + MODEL_NAME.lower() + '_bike_sharing'
-save_directory = 'C:/Users/Kristijonas/ray_results/' + folder_name
 hyperparameters = {'conv_hidden_layers'     : tune.choice([1, 2, 3]),
                    'conv_hidden_channels'   : tune.choice([4, 8, 16]),
                    'fc_hidden_layers'       : tune.choice([1, 2, 3]),
@@ -39,5 +37,3 @@ if __name__ == "__main__":
     )
     results = tuner.fit()
     print("Best config is:", results.get_best_result().config)
-
-result_df = Utils.load_best(save_directory, train_cnn)

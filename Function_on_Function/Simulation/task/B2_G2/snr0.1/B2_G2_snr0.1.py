@@ -4,13 +4,13 @@ import pandas as pd
 
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from Datasets.Function_on_Function import Models, Utils
+from Function_on_Function import Models, Utils
 
 
 beta, g, snr = 2, 2, 0.1
 
-data_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Simulation/data/B{beta}_G{g}/'
-save_directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Simulation/task/B{beta}_G{g}/'
+data_directory = f'Function_on_Function/Simulation/data/B{beta}_G{g}/'
+save_directory = f'Function_on_Function/Simulation/task/B{beta}_G{g}/'
 Y_dir = f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'
 
 X = pd.read_csv(data_directory + f'X/X_beta{beta}_g{g}_snr{snr}.csv', header = None).values

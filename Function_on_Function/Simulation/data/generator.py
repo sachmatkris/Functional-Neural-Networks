@@ -9,7 +9,7 @@ beta = 1
 mes = 0.2
 snr = 0.1   # snr = 0.2 g = 1; snr = 0.1  g = 2, 3
 n = 300
-folder = f'Datasets/Function_on_Function/Simulation/data/B{beta}_G{g}/'
+folder = f'Function_on_Function/Simulation/data/B{beta}_G{g}/'
 
 class SoFRDataGenerator:
     def __init__(self, grid, beta, g, mes, snr):
@@ -73,7 +73,7 @@ class SoFRDataGenerator:
 
 
             
-    def save(self, folder = 'Datasets/Function_Function/Simulation/data/task 1/'):
+    def save(self, folder = 'Function_Function/Simulation/data/task 1/'):
         """
         folder : folder where observations are saved
         """
@@ -83,8 +83,8 @@ class SoFRDataGenerator:
             os.makedirs(folder + 'Y/')
         if not os.path.exists(folder + 'T/'):
             os.makedirs(folder + 'T/')
-        if not os.path.exists(f'Datasets/Function_on_Function/Simulation/data/beta{self.beta_name}/'):
-            os.makedirs(f'Datasets/Function_on_Function/Simulation/data/beta{self.beta_name}/')
+        if not os.path.exists(f'Function_on_Function/Simulation/data/beta{self.beta_name}/'):
+            os.makedirs(f'Function_on_Function/Simulation/data/beta{self.beta_name}/')
         
     
         Path(folder).mkdir(parents=True, exist_ok=True)
@@ -95,7 +95,7 @@ class SoFRDataGenerator:
         X_df.to_csv(folder + f"X/X_beta{self.beta_name}_g{self.g}_snr{self.snr}.csv", index=False, header=None)
         Y_df.to_csv(folder + f"Y/Y_beta{self.beta_name}_g{self.g}_snr{self.snr}.csv", index=False, header=None)
         T_df.to_csv(folder + f"T/T_beta{self.beta_name}_g{self.g}_snr{self.snr}.csv", index=False, header=None)
-        beta.to_csv(f"Datasets/Function_on_Function/Simulation/data/beta{self.beta_name}/beta{self.beta_name}.csv", index=False, header=None)
+        beta.to_csv(f"Function_on_Function/Simulation/data/beta{self.beta_name}/beta{self.beta_name}.csv", index=False, header=None)
         
         if self.g != 3:
             if not os.path.exists(folder + 'true_surface/'):

@@ -5,7 +5,7 @@ import pandas as pd
 
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from Datasets.Function_on_Function import Models, Utils
+from Function_on_Function import Models, Utils
 
 
 class QuadraticLoss(nn.Module):
@@ -18,8 +18,8 @@ class QuadraticLoss(nn.Module):
         return loss
 
 
-directory = f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/'
-data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+directory = f'Function_on_Function/Real/Bike_Sharing/'
+data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
 bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
 bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
 bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]

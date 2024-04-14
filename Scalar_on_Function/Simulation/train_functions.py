@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from Datasets.Scalar_on_Function import Models, Utils
+from Scalar_on_Function import Models, Utils
 from ray import train
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 

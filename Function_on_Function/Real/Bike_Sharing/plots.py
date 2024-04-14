@@ -5,7 +5,7 @@ import matplotlib.cm as cm
 
 
 
-data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
 bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
 bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
 bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]
@@ -37,4 +37,4 @@ axs[2].set_ylabel('Humidity')
 radius_2Dline = plt.Line2D((0, 1), (0, 0), color='k', linewidth=2)
 fig.colorbar(m, ax = axs[1]).set_label('Average daily casual users ', size=10) 
 fig.colorbar(m, ax = axs[2]).set_label('Average daily casual users ', size=10) 
-fig.savefig('Datasets/Function_on_Function/Real/Bike_Sharing/bike_sharing.png', dpi=600, transparent=True)
+fig.savefig('Function_on_Function/Real/Bike_Sharing/bike_sharing.png', dpi=600, transparent=True)

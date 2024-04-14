@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from Datasets.Function_on_Function import Models, Utils
+from Function_on_Function import Models, Utils
 from ray import train
 from skfda.representation.basis import  FourierBasis, BSplineBasis
 
@@ -22,7 +22,7 @@ class QuadraticLoss(nn.Module):
 def train_ffbnn(config):
     EPOCHS = 1000
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+    data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
     bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
     bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
     bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]
@@ -64,7 +64,7 @@ def train_ffbnn(config):
 def train_ffdnn(config):
     EPOCHS = 1000
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+    data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
     bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
     bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
     bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]
@@ -93,7 +93,7 @@ def train_ffdnn(config):
 def train_nn(config):
     EPOCHS = 1000
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+    data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
     bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
     bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
     bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]
@@ -118,7 +118,7 @@ def train_nn(config):
 def train_cnn(config):
     EPOCHS = 1000
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+    data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
     bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
     bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
     bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]
@@ -147,7 +147,7 @@ def train_cnn(config):
 def train_lstm(config):
     EPOCHS = 1000
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data = pd.read_csv('C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
+    data = pd.read_csv('Function_on_Function/Real/Bike_Sharing/hour.csv', index_col = 0)
     bike_data = data.loc[data['weekday'] == 6, :] #We only consider Saturday's as in the original paper
     bike_df = bike_data.pivot(index=['dteday'], columns=['hr'], values=['temp', 'hum', 'casual']).reset_index()
     bike_df.columns = ['_'.join(map(str, col)) if col[0] in ['temp', 'hum', 'casual'] else col[0] for col in bike_df.columns]

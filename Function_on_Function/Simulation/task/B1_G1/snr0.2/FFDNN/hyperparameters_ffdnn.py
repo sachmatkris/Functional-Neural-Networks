@@ -1,6 +1,5 @@
 import torch
-from Datasets.Function_on_Function import Utils
-from Datasets.Function_on_Function.Simulation.train_functions import train_ffdnn
+from Function_on_Function.Simulation.train_functions import train_ffdnn
 
 from ray import train, tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
@@ -10,19 +9,17 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 MODEL_NAME = 'FFDNN'
 beta, g, snr = 1, 1, 0.2
 folder_name = 'train_' + MODEL_NAME.lower() + f'_fof_regressionsimulation_beta{beta}_g{g}'
-save_directory = 'C:/Users/Kristijonas/ray_results/' + folder_name
 hyperparameters = {'hidden_layers'      : tune.choice([1, 2, 3]),
                    'hidden_nodes'       : tune.choice([8, 16, 32, 64]),
                    'hidden_q'           : tune.choice([10, 20, 50]),
                    'lambda_weight'      : tune.uniform(0.0, 1.0),
                    'lambda_bias'        : tune.uniform(0.0, 1.0),
                    'lr'                 : tune.uniform(0.001, 0.5),
-                   'data_directory'     : f'C:/Users/Kristijonas/Desktop/ETH/Master thesis/Datasets/Function_on_Function/Simulation/data/B{beta}_G{g}/',
+                   'data_directory'     : f'Function_on_Function/Simulation/data/B{beta}_G{g}/',
                    'MODEL_NAME'         : MODEL_NAME,
                    'X_dir'              : f'X/X_beta{beta}_g{g}_snr{snr}.csv',
                    'T_dir'              : f'T/T_beta{beta}_g{g}_snr{snr}.csv',
                    'Y_dir'              : f'Y/Y_beta{beta}_g{g}_snr{snr}.csv'}
-
 
 
 if __name__ == "__main__":
@@ -43,5 +40,3 @@ if __name__ == "__main__":
     )
     results = tuner.fit()
     print("Best config is:", results.get_best_result().config)
-
-result_df = Utils.load_best(save_directory, train_ffdnn)
