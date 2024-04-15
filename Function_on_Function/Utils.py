@@ -2,9 +2,6 @@ import torch
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 import numpy as np
-
-from sklearn.preprocessing import StandardScaler
-from skfda.preprocessing.dim_reduction import FPCA
 from ray import tune
 
 
